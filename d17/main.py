@@ -1,37 +1,43 @@
-from turtle import Turtle, Screen
-from random import randint
-
-
-class TurtleRace(Turtle):
-    def __init__(self, color, x, y):
-        super().__init__()  # Initialize the Turtle class
-        self.color(color)  # Set the turtle's color
-        self.shape("turtle")  # Set the shape of the turtle
-        self.penup()  # Lift the pen to avoid drawing when moving
-        self.goto(x, y)  # Move the turtle to the specified position
-
-
-turtles = []
-race = True
-colors = ["red", "yellow", "green", "black", "purple", "pink"]
-y_pos = [-70, -40, -10, 20, 50, 80]
+from turtle import Screen
+from time import sleep
+from snake import Snake
+from food import Food
+from scoreboard import Scoreboard
 
 screen = Screen()
-screen.setup(500, 400)
-user_choice = screen.textinput("turtleVictory", "enter the color of ur turtle")
+screen.setup(height=600, width=600)
+screen.title("Snake Game")
+screen.bgcolor("black")
+screen.tracer(0)
+screen.listen()
+game_one = True
 
-for turtle_index in range(6):
-    tim = TurtleRace(colors[turtle_index], -230, y_pos[turtle_index])
-    turtles.append(tim)
 
-while race:
-    for t in turtles:
-        t.forward(randint(3, 13))
-        if t.xcor() >= 230:
-            race = False
-            if t.pencolor() == user_choice:
-                print("YOU WIN")
-            else:
-                print(f"SORRY YOU LOOSE the turtle {t.pencolor()} win")
+snake = Snake()
+food = Food()
+sb = Scoreboard()
+
+while game_one:
+    screen.update()
+    sleep(0.1)
+    snake.move()
+    screen.onkey(key="Left", fun=snake.turn_left)
+    screen.onkey(key="Right", fun=snake.turn_right)
+    screen.onkey(key="Up", fun=snake.up)
+    screen.onkey(key="Down", fun=snake.down)
+
+    if snake.segments[0].distance(food) <= 15:
+        sb.increase_score()
+        food.generate_food()
+        snake.extend_segment()
+
+    if snake.segments[0].xcor() > 290 or snake.segments[0].xcor() < -290 or snake.segments[0].ycor() > 290 or snake.segments[0].ycor() < -290:
+        sb.game_over()
+        game_one = False
+
+    for segment in snake.segments[1:]:
+        if snake.segments[0].distance(segment) < 10:
+            sb.game_over()
+            game_one = False
 
 screen.exitonclick()
