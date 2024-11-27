@@ -1,7 +1,6 @@
 import time
 from turtle import Screen
 from player import Player
-from random import randint
 from car_manager import CarManager
 from scoreboard import Scoreboard
 

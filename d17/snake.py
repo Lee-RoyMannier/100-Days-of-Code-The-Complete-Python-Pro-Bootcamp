@@ -22,6 +22,12 @@ class Snake():
     def extend_segment(self):
         self.create_segment(self.segments[-1].position())
 
+    def reset(self):
+        for seg in self.segments:
+            seg.goto(1000, 1000)
+        self.segments.clear()
+        self.create_body()
+
     def move(self):
         for t in range(len(self.segments)-1, 0, -1):
             xcor = self.segments[t-1].xcor()
