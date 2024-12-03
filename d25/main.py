@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 
 def password_gen():
@@ -36,23 +37,53 @@ def password_gen():
     pyperclip.copy(password)
 
 
+def seach_web():
+    try:
+        with open("data.json", "r") as data_file:
+            data = json.load(data_file)
+            web = data[web_entry.get()]
+    except KeyError:
+        messagebox.showerror(message="Pas de site trouvé")
+    else:
+        email_entry.delete(0, tk.END)
+        email_entry.insert(0, web["email"])
+        password_entry.insert(0, web["password"])
+
+
 def save_data():
     website = web_entry.get()
     email = email_entry.get()
     pwd = password_entry.get()
+    new_data = {
+        website: {
+            "email": email,
+            "password": pwd
+        }
+    }
 
     if len(website) == 0 or len(email) == 0 or len(pwd) == 0:
         messagebox.ERROR = 'error'
 
         messagebox.showerror(
             "Error", message="Une information n'est pas rentrée")
-    input_data = messagebox.askokcancel(
-        "Confirmation", message="Les informations sont save")
-    if input_data:
-        with open("data.txt", "a") as file:
-            file.write(f"{website} | {email} | {pwd} \n")
-            web_entry.delete(0, tk.END)
-            password_entry.delete(0, tk.END)
+    else:
+        input_data = messagebox.askokcancel(
+            "Confirmation", message="Les informations sont save")
+        if input_data:
+            try:
+                with open("data.json", "r") as data_file:
+                    data = json.load(data_file)
+            except FileNotFoundError:
+                with open("data.json", "w") as data_file:
+                    json.dump(new_data, data_file, indent=4)
+            else:
+                data.update(new_data)
+
+                with open("data.json", "w") as data_file:
+                    json.dump(data, data_file, indent=4)
+            finally:
+                web_entry.delete(0, tk.END)
+                password_entry.delete(0, tk.END)
 
 
 screen = tk.Tk()
@@ -76,18 +107,20 @@ password_label.grid(column=0, row=3)
 
 web_entry = tk.Entry(width=35,
                      highlightthickness=0)
+web_search = tk.Button(text="Search", command=seach_web)
 web_entry.focus()
-web_entry.grid(column=1, row=1, columnspan=2)
+web_entry.grid(column=1, row=1)
+web_search.grid(column=2, row=1, columnspan=2)
 
 email_entry = tk.Entry(width=35,  highlightthickness=0)
 email_entry.insert(tk.END, "test@hotmail.fr")
-email_entry.grid(column=1, row=2, columnspan=2)
+email_entry.grid(column=1, row=2)
 
 password_entry = tk.Entry(width=36,  highlightthickness=0)
 generate_btn = tk.Button(text="Generate Password",
                          bg="white", highlightthickness=0, command=password_gen)
-password_entry.grid(column=1, row=3, columnspan=2)
-generate_btn.grid(column=2, row=3)
+password_entry.grid(column=1, row=3)
+generate_btn.grid(column=2, row=3, columnspan=2)
 add_btn = tk.Button(text="Add", width=36, command=save_data)
 add_btn.grid(row=4, column=1, columnspan=2)
 screen.mainloop()
