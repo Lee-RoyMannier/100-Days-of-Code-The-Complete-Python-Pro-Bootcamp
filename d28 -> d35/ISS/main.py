@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
 import smtplib
+import time
 
 from config import MY_EMAIL, PASSWORD
 
@@ -33,11 +34,13 @@ sunset = int(data["results"]["sunset"].split("T")[1].split(":")[0])
 
 time_now = datetime.now()
 
-if close_to_me and (time_now.hour >= sunset or time_now.hour <= sunrise):
-    with smtplib.SMTP_SSL("smtplib.gmail.com") as mail:
-        mail.login(password=PASSWORD, user=MY_EMAIL)
-        mail.sendmail(
-            to_addrs="test@test.fr",
-            from_addr=MY_EMAIL,
-            msg="Subject:LOOK UP \n\n check the ISS in the sky!!"
-        )
+while True:
+    time.sleep(60)
+    if close_to_me and (time_now.hour >= sunset or time_now.hour <= sunrise):
+        with smtplib.SMTP_SSL("smtplib.gmail.com") as mail:
+            mail.login(password=PASSWORD, user=MY_EMAIL)
+            mail.sendmail(
+                to_addrs="test@test.fr",
+                from_addr=MY_EMAIL,
+                msg="Subject:LOOK UP \n\n check the ISS in the sky!!"
+            )
