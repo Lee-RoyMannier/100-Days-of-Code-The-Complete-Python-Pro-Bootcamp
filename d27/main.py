@@ -13,8 +13,8 @@ import datetime as dt
 import pandas as pd
 import random
 
-MY_EMAIL = "XXXXX"
-PASSWORD = "XXXXXX"
+MY_EMAIL = "XXX@gmail.com"
+PASSWORD = "XXXf"
 
 # Importation des csv des dates d'anniversaires
 birthday_dates = pd.read_csv(
@@ -23,7 +23,7 @@ birthday_dates = pd.read_csv(
 birthday = {(b.month, b.day): [b.email, b["name"]]
             for (index, b) in birthday_dates.iterrows()}
 models_letter = ["letter_1.txt", "letter_2.txt", "letter_3.txt"]
-actual_date = dt.datetime(year=2024, month=6, day=22)
+actual_date = dt.datetime.now()
 actual_date = (actual_date.month, actual_date.day)
 
 birthday_person = birthday.get(actual_date, "not_today")
