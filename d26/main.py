@@ -28,7 +28,6 @@ word_to_dict = pd.DataFrame.to_dict(words, orient="records")
 screen = tk.Tk()
 screen.title("Flashy")
 screen.config(bg=BACKGROUND_COLOR, padx=50, pady=50)
-b = screen.after(3000, display_translation)
 canvas = tk.Canvas(width=800, height=526)
 img_bkg = tk.PhotoImage(file="images/card_front.png")
 translation = tk.PhotoImage(file="images/card_back.png")
@@ -51,6 +50,7 @@ validate = tk.Button(image=wrong, highlightthickness=0,
 uncknow.grid(column=0, row=1)
 validate.grid(column=1, row=1)
 
+b = screen.after(3000, display_translation)
 get_random_word()
 
 screen.mainloop()
